@@ -1,4 +1,4 @@
-package top.itshanhe.newcodevideo.utils;
+package top.itshanhe.newcodevideo.common.utils;
 
 /**
  * <p>
