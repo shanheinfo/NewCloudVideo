@@ -1,0 +1,38 @@
+# 设置应用程序的端口
+server:
+  port: 9099
+  servlet:
+    context-path: /
+
+
+# 设置应用程序的名称
+spring:
+  application:
+    name: NewCodeVideo
+  datasource:
+    url: jdbc:mysql://localhost:3306/NewCodeVideo
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 123456
+      lettuce:
+        pool:
+          max-active: 100
+          max-idle: 40
+          min-idle: 10
+          time-between-eviction-runs: 10s
+  redis:
+    redisson:
+      file: classpath:redisson.yaml
+# 配置日志级别
+logging:
+  level:
+    # 根日志级别为INFO
+    root: INFO
+    # com.example.mypackage包的日志级别为DEBUG
+    top.itshanhe.newcodevideo: DEBUG
+
