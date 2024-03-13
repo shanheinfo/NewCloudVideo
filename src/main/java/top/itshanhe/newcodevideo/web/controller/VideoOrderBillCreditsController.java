@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 积分流水表 前端控制器
+ * 余额流水表 前端控制器
  * </p>
  *
  * @author shanhe
- * @since 2024-03-12
+ * @since 2024-03-13
  */
 @RestController
 @RequestMapping("/video-order-bill-credits")

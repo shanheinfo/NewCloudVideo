@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author shanhe
- * @since 2024-03-12
+ * @since 2024-03-13
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -103,7 +103,7 @@ public class VideoUser implements Serializable {
     private LocalDateTime userUpdateTime;
 
     /**
-     * 用户是否封禁 1 封禁
+     * 用户是否封禁
      */
     private Boolean userStatus;
 

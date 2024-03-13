@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author shanhe
- * @since 2024-03-12
+ * @since 2024-03-13
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -25,10 +25,10 @@ public class UserFollowRelation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 关注ID
+     * 主键ID
      */
-    @TableId(value = "follow_id", type = IdType.AUTO)
-    private Long followId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     /**
      * 用户ID

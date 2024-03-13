@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author shanhe
- * @since 2024-03-12
+ * @since 2024-03-13
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -47,14 +47,39 @@ public class VideoInfo implements Serializable {
     private String videoDescription;
 
     /**
-     * 视频地址
+     * 视频地址id
      */
     private Long videoAddressId;
+
+    /**
+     * 封面图片ID,没有就以视频第一帧为封面
+     */
+    private Long coverImgId;
 
     /**
      * 上传时间
      */
     private LocalDateTime videoCreateTime;
+
+    /**
+     * 是否是组合表
+     */
+    private Boolean isCombined;
+
+    /**
+     * 组合id，相同组合就是同一个组合Id，非组合就为 0 
+     */
+    private Long combinedId;
+
+    /**
+     * 标签id用,分隔开
+     */
+    private String keywordsId;
+
+    /**
+     * 分类id
+     */
+    private String categoryId;
 
 
 }

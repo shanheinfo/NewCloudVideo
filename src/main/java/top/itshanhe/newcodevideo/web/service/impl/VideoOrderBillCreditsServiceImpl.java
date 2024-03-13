@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 
 /**
  * <p>
- * 积分流水表 服务实现类
+ * 余额流水表 服务实现类
  * </p>
  *
  * @author shanhe
- * @since 2024-03-12
+ * @since 2024-03-13
  */
 @Service
 public class VideoOrderBillCreditsServiceImpl extends ServiceImpl<VideoOrderBillCreditsMapper, VideoOrderBillCredits> implements IVideoOrderBillCreditsService {

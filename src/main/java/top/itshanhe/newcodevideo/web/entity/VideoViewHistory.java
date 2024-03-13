@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author shanhe
- * @since 2024-03-12
+ * @since 2024-03-13
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -27,12 +27,23 @@ public class VideoViewHistory implements Serializable {
     /**
      * 视频ID
      */
+    @TableId(value = "video_id")
     private String videoId;
+
+    /**
+     * 点赞次数
+     */
+    private Long likeNumber;
+
+    /**
+     * 评论数量
+     */
+    private Long commentNumber;
 
     /**
      * 浏览次数
      */
-    private Long historyId;
+    private Long historyNumber;
 
 
 }

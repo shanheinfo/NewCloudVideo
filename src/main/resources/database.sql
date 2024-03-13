@@ -5,19 +5,24 @@ USE NewCodeVideo;
 SET NAMES utf8mb4;
 
 DROP TABLE IF EXISTS `video_user`;
+DROP TABLE IF EXISTS `user_follow_relation`;
 DROP TABLE IF EXISTS `video_admin`;
 DROP TABLE IF EXISTS `video_img_file`;
 DROP TABLE IF EXISTS `video_img_data`;
-DROP TABLE IF EXISTS `user_follow_relation`;
-DROP TABLE IF EXISTS `video_category`;
 DROP TABLE IF EXISTS `video_info`;
+DROP TABLE IF EXISTS `article_info`;
+DROP TABLE IF EXISTS `video_favorite`;
+DROP TABLE IF EXISTS `video_combined`;
 DROP TABLE IF EXISTS `video_address`;
-DROP TABLE IF EXISTS `video_order_bill_credits`;
 DROP TABLE IF EXISTS `video_category`;
 DROP TABLE IF EXISTS `video_keyword`;
-DROP TABLE IF EXISTS `payment_configuration`;
-DROP TABLE IF EXISTS `vide_payment_record`;
+DROP TABLE IF EXISTS `video_comment`;
+DROP TABLE IF EXISTS `video_view_history`;
+DROP TABLE IF EXISTS `video_order_bill_credits`;
 DROP TABLE IF EXISTS `video_order_list`;
+DROP TABLE IF EXISTS `vide_payment_record`;
+DROP TABLE IF EXISTS `payment_configuration`;
+
 
 #----------------------
 # 用户表
@@ -38,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `video_user`(
      `user_create_ip` varchar(30) NOT NULL DEFAULT 0 COMMENT '创建时IP',
      `user_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
      `user_update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-     `user_status` tinyint(1) DEFAULT 1 COMMENT '用户是否封禁 1 封禁',
+     `user_status` TINYINT(1) NOT NULL DEFAULT FALSE COMMENT '用户是否封禁',
      PRIMARY KEY (`id`) USING BTREE,
      UNIQUE (`user_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '用户表';
@@ -47,10 +52,10 @@ CREATE TABLE IF NOT EXISTS `video_user`(
 # 粉丝关注表
 #----------------------
 CREATE TABLE IF NOT EXISTS `user_follow_relation`(
-      `follow_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '关注ID',
+      `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
       `user_id` varchar(90) NOT NULL COMMENT '用户ID',
       `followed_user_id` varchar(90) NOT NULL COMMENT '被关注者用户ID',
-      PRIMARY KEY (`follow_id`),
+      PRIMARY KEY (`id`),
       INDEX `idx_user_id` (`user_id`),
       INDEX `idx_follower_id` (`followed_user_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '粉丝关注表';
@@ -97,11 +102,55 @@ CREATE TABLE IF NOT EXISTS `video_info` (
         `user_id` varchar(90) NOT NULL COMMENT '上传者用户ID',
         `video_name` varchar(2048) NOT NULL COMMENT '视频名称',
         `video_description` text NOT NULL COMMENT '视频描述',
-        `video_address_id` bigint(20) UNSIGNED NULL COMMENT '视频地址',
+        `video_address_id` bigint(20) UNSIGNED NULL COMMENT '视频地址id',
+        `cover_img_id` bigint(20) UNSIGNED NOT NULL COMMENT '封面图片ID,没有就以视频第一帧为封面',
         `video_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间',
+        `is_combined` TINYINT(1) NOT NULL DEFAULT FALSE COMMENT '是否是组合表',
+        `combined_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '组合id，相同组合就是同一个组合Id，非组合就为 0 ',
+        `keywords_id` varchar(450) NOT NULL COMMENT '标签id用,分隔开',
+        `category_id` varchar(450) NOT NULL COMMENT '分类id',
         UNIQUE (`video_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='视频信息表';
 
+#----------------------
+# 图文表
+#----------------------
+CREATE TABLE IF NOT EXISTS `article_info` (
+      `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
+      `article_id` varchar(450) NOT NULL COMMENT '图文ID',
+      `user_id` varchar(90) NOT NULL COMMENT '发布者用户ID',
+      `article_title` varchar(2048) NOT NULL COMMENT '图文标题',
+      `article_content` text NOT NULL COMMENT '图文内容',
+      `cover_img_id` bigint(20) UNSIGNED NOT NULL COMMENT '封面图片ID',
+      `article_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '发布时间',
+      `keywords_id` varchar(450) NOT NULL COMMENT '标签ID用，分隔开',
+      `category_id` varchar(450) NOT NULL COMMENT '分类ID',
+      PRIMARY KEY (`id`),
+      UNIQUE (`article_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='图文信息表';
+
+#----------------------
+# 收藏表
+#----------------------
+CREATE TABLE IF NOT EXISTS `video_favorite` (
+        `favorite_id` varchar(450) NOT NULL COMMENT '视频ID',
+        `favorite_type` tinyint(1) NOT NULL COMMENT '收藏类型(1:视频,2:图文)',
+        `user_id` varchar(90) NOT NULL COMMENT '用户ID',
+        UNIQUE KEY `user_video_favorite_id` (`favorite_id`,`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户收藏视频表';
+
+#----------------------
+# 组合表
+#----------------------
+CREATE TABLE IF NOT EXISTS `video_combined` (
+    `combined_id` bigint(20) UNSIGNED NOT NULL COMMENT '组合ID',
+    `video_id` varchar(450) NOT NULL COMMENT '视频ID',
+    `combined_name` varchar(255) NOT NULL COMMENT '组合名称',
+    `combined_description` text NOT NULL COMMENT '组合描述',
+    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    UNIQUE (`video_id`),
+    index (`combined_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='视频组合表';
 
 #----------------------
 # 视频地址表
@@ -151,12 +200,14 @@ CREATE TABLE IF NOT EXISTS `video_comment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='视频评论表';
 
 #----------------------
-# 视频浏览记录
+# 视频记录
 #----------------------
 CREATE TABLE IF NOT EXISTS `video_view_history` (
         `video_id` varchar(450) NOT NULL COMMENT '视频ID',
-        `history_id` bigint(20) UNSIGNED NOT NULL COMMENT '浏览次数',
-        KEY `idx_video_id` (`video_id`) USING BTREE
+        `like_number` bigint(20) UNSIGNED NOT NULL COMMENT '点赞次数',
+        `comment_number` bigint(20) UNSIGNED NOT NULL COMMENT '评论数量',
+        `history_number` bigint(20) UNSIGNED NOT NULL COMMENT '浏览次数',
+        UNIQUE `idx_video_id` (`video_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='视频浏览记录表';
 
 
@@ -171,7 +222,7 @@ CREATE TABLE IF NOT EXISTS `video_order_bill_credits`(
          `payment_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
          PRIMARY KEY (`id`) USING BTREE,
          INDEX (`user_id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '积分流水表';
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '余额流水表';
 
 
 CREATE TABLE `video_order_list` (
