@@ -10,7 +10,7 @@ spring:
   application:
     name: NewCodeVideo
   datasource:
-    url: jdbc:mysql://localhost:3306/mydb
+    url: jdbc:mysql://localhost:3306/NewCodeVideo
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
