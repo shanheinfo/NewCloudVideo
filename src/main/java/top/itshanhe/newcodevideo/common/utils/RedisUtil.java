@@ -1,10 +1,8 @@
 package top.itshanhe.newcodevideo.common.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.*;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -17,9 +15,25 @@ import java.util.Map;
  * @author shanhe
  * @date 2024/3/13
  */
+@Component
 public class RedisUtil {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    
+    @Autowired
+    public RedisTemplate redisTemplate;
+    
+    /**
+     * 获得缓存的基本对象。
+     *
+     * @param key 缓存键值
+     * @return 缓存键值对应的数据
+     */
+    public <T> T getCacheObject(final String key)
+    {
+        ValueOperations<String, T> operation = redisTemplate.opsForValue();
+        return operation.get(key);
+    }
     
     /**
      * 存储String类型数据
