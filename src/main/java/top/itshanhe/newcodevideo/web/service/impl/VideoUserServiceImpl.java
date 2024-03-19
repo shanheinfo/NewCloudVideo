@@ -1,5 +1,7 @@
 package top.itshanhe.newcodevideo.web.service.impl;
 
+import top.itshanhe.newcodevideo.common.utils.ResultUtil;
+import top.itshanhe.newcodevideo.web.dto.LoginDTO;
 import top.itshanhe.newcodevideo.web.entity.VideoUser;
 import top.itshanhe.newcodevideo.web.mapper.VideoUserMapper;
 import top.itshanhe.newcodevideo.web.service.IVideoUserService;
@@ -16,5 +18,20 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class VideoUserServiceImpl extends ServiceImpl<VideoUserMapper, VideoUser> implements IVideoUserService {
-
+    
+    @Override
+    public ResultUtil userMailLogin(LoginDTO loginDTO) {
+        
+        return null;
+    }
+    
+    @Override
+    public ResultUtil userPhoneLogin(LoginDTO loginDTO) {
+        return null;
+    }
+    
+    @Override
+    public ResultUtil userPwdLogin(LoginDTO loginDTO) {
+        return null;
+    }
 }
