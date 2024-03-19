@@ -1,4 +1,4 @@
-package top.itshanhe.newcodevideo.web.filter;
+package top.itshanhe.newcodevideo.web.security.filter;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;

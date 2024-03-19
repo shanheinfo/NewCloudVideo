@@ -182,19 +182,31 @@ CREATE TABLE IF NOT EXISTS `video_keyword` (
        UNIQUE (`keyword_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='视频关键词表';
 
-
 #----------------------
-# 二级评论表
+# 一级评论表
 #----------------------
 CREATE TABLE IF NOT EXISTS `video_comment` (
        `comment_id` bigint(20) UNSIGNED NOT NULL COMMENT '评论ID',
        `video_id` varchar(450) NOT NULL COMMENT '视频ID',
        `user_id` varchar(90) NOT NULL COMMENT '评论用户ID',
-       `parent_id` bigint(20) UNSIGNED DEFAULT NULL COMMENT '父级评论ID，用于支持二级评论',
+       `parent_num` bigint(20) UNSIGNED DEFAULT 0 NULL COMMENT '二级评论数',
        `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '评论内容',
        `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '评论时间',
        PRIMARY KEY (`comment_id`),
        KEY `idx_video_id` (`video_id`),
+       KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='视频评论表';
+
+#----------------------
+# 二级评论表
+#----------------------
+CREATE TABLE IF NOT EXISTS `video_thirty_comment` (
+       `comment_id` bigint(20) UNSIGNED NOT NULL COMMENT '评论ID',
+       `user_id` varchar(90) NOT NULL COMMENT '评论用户ID',
+       `parent_id` bigint(20) UNSIGNED DEFAULT NULL COMMENT '父级评论ID，用于支持二级评论',
+       `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '评论内容',
+       `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '评论时间',
+       PRIMARY KEY (`comment_id`),
        KEY `idx_user_id` (`user_id`),
        KEY `idx_parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='视频评论表';

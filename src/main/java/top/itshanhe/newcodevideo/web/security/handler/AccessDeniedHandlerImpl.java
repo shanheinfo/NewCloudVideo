@@ -1,4 +1,4 @@
-package top.itshanhe.newcodevideo.web.handler;
+package top.itshanhe.newcodevideo.web.security.handler;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ import java.io.IOException;
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        ResultUtil result = new ResultUtil(HttpStatus.FORBIDDEN.value(),"您的权限不足");
+        ResultUtil result = new ResultUtil(HttpStatus.FORBIDDEN.value(),"没有权限");
         String json = JSON.toJSONString(result);
         //处理异常
         JsonUtil.renderString(response,json);

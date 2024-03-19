@@ -15,7 +15,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import top.itshanhe.newcodevideo.web.filter.JwtAuthenticationTokenFilter;
+import top.itshanhe.newcodevideo.web.security.filter.JwtAuthenticationTokenFilter;
 
 
 /**
@@ -93,4 +93,6 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler);
         return httpSecurity.build();
     }
+    
+    
 }
