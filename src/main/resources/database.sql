@@ -7,8 +7,8 @@ SET NAMES utf8mb4;
 DROP TABLE IF EXISTS `video_user`;
 DROP TABLE IF EXISTS `user_follow_relation`;
 DROP TABLE IF EXISTS `video_admin`;
-DROP TABLE IF EXISTS `video_img_file`;
-DROP TABLE IF EXISTS `video_img_data`;
+DROP TABLE IF EXISTS `video_admin_notice`;
+DROP TABLE IF EXISTS `video_img_carousel`;
 DROP TABLE IF EXISTS `video_info`;
 DROP TABLE IF EXISTS `article_info`;
 DROP TABLE IF EXISTS `video_favorite`;
@@ -17,11 +17,13 @@ DROP TABLE IF EXISTS `video_address`;
 DROP TABLE IF EXISTS `video_category`;
 DROP TABLE IF EXISTS `video_keyword`;
 DROP TABLE IF EXISTS `video_comment`;
+DROP TABLE IF EXISTS `video_thirty_comment`;
 DROP TABLE IF EXISTS `video_view_history`;
 DROP TABLE IF EXISTS `video_order_bill_credits`;
 DROP TABLE IF EXISTS `video_order_list`;
 DROP TABLE IF EXISTS `vide_payment_record`;
 DROP TABLE IF EXISTS `payment_configuration`;
+
 
 
 #----------------------
@@ -74,6 +76,22 @@ CREATE TABLE IF NOT EXISTS `video_admin`(
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '管理员表';
 
 #----------------------
+# 管理员公告表
+#----------------------
+CREATE TABLE IF NOT EXISTS `video_admin_notice` (
+      `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+      `admin_id` varchar(90) NOT NULL COMMENT '管理员ID',
+      `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '公告标题',
+      `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '公告内容',
+      `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '发布时间',
+      `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否顶置 0: 否，1: 是',
+      `is_expired` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否过期 0: 否，1: 是',
+      `is_homepage` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否首页 0: 否，1: 是',
+      PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '管理员公告表';
+
+
+#----------------------
 # 图片地址表
 #----------------------
 CREATE TABLE IF NOT EXISTS `video_img_file`(
@@ -93,6 +111,15 @@ CREATE TABLE IF NOT EXISTS `video_img_data`(
         `img_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间',
         UNIQUE KEY `user_img_id` (`img_id`,`user_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '图片表';
+
+#----------------------
+# 轮播图表
+#----------------------
+CREATE TABLE IF NOT EXISTS `video_img_carousel` (
+          `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+          `img_id` bigint(20) UNSIGNED NOT NULL COMMENT '图片ID',
+          PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '轮播图表';
 
 #----------------------
 # 视频表
