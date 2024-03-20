@@ -48,9 +48,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             adminQueryWrapper.eq(VideoAdmin::getUserId, user.getUserId());
             VideoAdmin admin = adminMapper.selectOne(adminQueryWrapper);
             if (admin != null && admin.getType() == 1) {
-                // 管理员1级权限
+                // 在本项目中，普通用户也可以具有管理员权限，所以如果是管理员则有两个权限同时存在
                 List<String> permissions = new ArrayList<>();
+                // 管理员权限
                 permissions.add(UserTypeEnum.getValue(UserTypeEnum.ADMIN));
+                // 给用户权限
+                permissions.add(UserTypeEnum.getValue(UserTypeEnum.USER));
                 return new LoginUser(user, permissions);
             }
         }
