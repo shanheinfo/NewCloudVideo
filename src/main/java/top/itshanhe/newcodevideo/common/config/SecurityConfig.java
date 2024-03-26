@@ -49,48 +49,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                // 配置HttpSecurity
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        // 定义授权规则
                         .antMatchers("/public/**").permitAll()  // 允许访问以 "/public/" 开头的所有路径，不需要进行身份验证
+                        .antMatchers("/user/login").permitAll()  // 允许访问登录接口，不需要进行身份验证
                         .anyRequest().authenticated()  // 对于其他所有请求，需要进行身份验证
                 )
-                //关闭 csrf
-                .csrf().disable()
-                //不通过Session获取SecurityContext
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                //登录接口允许匿名访问
-                .authorizeRequests()
-                .antMatchers("/user/login").anonymous()
-                // 除上面外的所有请求全部需要鉴权认证
-                .anyRequest().authenticated()
+                .csrf().disable()  // 关闭 CSRF
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 不使用 Session 获取 SecurityContext
                 .and()
                 .logout()  // 配置注销功能
                 .logoutUrl("/logout")
-                //清除认证信息
                 .clearAuthentication(true)
-                // 允许所有用户访问注销功能
-                .permitAll();
-//                .formLogin()  // 配置表单登录
-//                .loginPage("/login")  // 指定登录页面的路径为 "/login"
-//                .permitAll()  // 允许所有用户访问登录页面
-//                .and()  // 连接前面的配置和后面的配置
-//                .logout()  // 配置注销功能
-//                .logoutUrl("/logout")
-//                .clearAuthentication(true)
-//                .permitAll();  // 允许所有用户访问注销功能
-        //允许跨域
-        httpSecurity.cors();
+                .permitAll();  // 允许所有用户访问注销功能
     
-        //添加过滤器
-        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.cors(); // 允许跨域
     
-        //配置异常处理器
+        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class); // 添加过滤器
+    
+        // 配置异常处理器
         httpSecurity.exceptionHandling()
-                //配置认证失败处理器
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler);
+                .authenticationEntryPoint(authenticationEntryPoint) // 配置认证失败处理器
+                .accessDeniedHandler(accessDeniedHandler); // 配置访问被拒绝处理器
+    
         return httpSecurity.build();
     }
     

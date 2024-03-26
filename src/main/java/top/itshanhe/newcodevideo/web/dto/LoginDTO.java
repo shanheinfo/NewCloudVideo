@@ -26,4 +26,8 @@ public class LoginDTO {
     private String userPwd;
     //验证码
     private String key;
+    //临时session
+    private String session;
+    //判断是否登录
+    private Boolean IFLogin;
 }

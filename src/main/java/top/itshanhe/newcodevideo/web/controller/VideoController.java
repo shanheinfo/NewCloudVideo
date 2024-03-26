@@ -1,5 +1,7 @@
 package top.itshanhe.newcodevideo.web.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 /**
  * <p>
  * 内容

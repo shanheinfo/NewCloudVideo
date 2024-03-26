@@ -20,4 +20,6 @@ public interface IVideoUserService extends IService<VideoUser> {
     ResultUtil userPhoneLogin(LoginDTO loginDTO);
     
     ResultUtil userPwdLogin(LoginDTO loginDTO);
+    
+    ResultUtil register(LoginDTO loginDTO);
 }

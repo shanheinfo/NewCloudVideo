@@ -26,16 +26,19 @@ public class LoginController {
     @Resource
     private IVideoUserService userService;
     // 邮箱登录
-    public ResultUtil LoginMail(@RequestBody LoginDTO loginDTO) {
+    public ResultUtil loginMail(@RequestBody LoginDTO loginDTO) {
         return userService.userMailLogin(loginDTO);
     }
     // 手机号登录
-    public ResultUtil LoginPhone(@RequestBody LoginDTO loginDTO) {
+    public ResultUtil loginPhone(@RequestBody LoginDTO loginDTO) {
         return userService.userPhoneLogin(loginDTO);
     }
     // 账号密码登录
-    public ResultUtil LoginPwd(@RequestBody LoginDTO loginDTO) {
+    public ResultUtil loginPwd(@RequestBody LoginDTO loginDTO) {
         return userService.userPwdLogin(loginDTO);
+    }
+    public ResultUtil register(@RequestBody LoginDTO loginDTO) {
+        return userService.register(loginDTO);
     }
     //todo 扫码登录
 //    public ResultUtil LoginOA2(@RequestBody LoginDTO loginDTO) {

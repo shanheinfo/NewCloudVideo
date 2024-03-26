@@ -7,8 +7,8 @@ SET NAMES utf8mb4;
 DROP TABLE IF EXISTS `video_user`;
 DROP TABLE IF EXISTS `user_follow_relation`;
 DROP TABLE IF EXISTS `video_admin`;
-DROP TABLE IF EXISTS `video_img_file`;
-DROP TABLE IF EXISTS `video_img_data`;
+DROP TABLE IF EXISTS `video_admin_notice`;
+DROP TABLE IF EXISTS `video_img_carousel`;
 DROP TABLE IF EXISTS `video_info`;
 DROP TABLE IF EXISTS `article_info`;
 DROP TABLE IF EXISTS `video_favorite`;
@@ -17,11 +17,13 @@ DROP TABLE IF EXISTS `video_address`;
 DROP TABLE IF EXISTS `video_category`;
 DROP TABLE IF EXISTS `video_keyword`;
 DROP TABLE IF EXISTS `video_comment`;
+DROP TABLE IF EXISTS `video_thirty_comment`;
 DROP TABLE IF EXISTS `video_view_history`;
 DROP TABLE IF EXISTS `video_order_bill_credits`;
 DROP TABLE IF EXISTS `video_order_list`;
 DROP TABLE IF EXISTS `vide_payment_record`;
 DROP TABLE IF EXISTS `payment_configuration`;
+
 
 
 #----------------------
@@ -32,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `video_user`(
      `user_id` varchar(90) NOT NULL COMMENT '用户id',
      `user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '账号',
      `user_nick_name` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '昵称',
-     `user_mail` varchar(320) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '邮箱',
+     `user_mail` varchar(320) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '邮箱',
      `user_phone` varchar(320) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '手机号',
      `user_pwd` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
      `alipay_user_id` varchar(255) NULL COMMENT '支付宝用户ID',
@@ -74,6 +76,22 @@ CREATE TABLE IF NOT EXISTS `video_admin`(
 )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '管理员表';
 
 #----------------------
+# 管理员公告表
+#----------------------
+CREATE TABLE IF NOT EXISTS `video_admin_notice` (
+      `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+      `admin_id` varchar(90) NOT NULL COMMENT '管理员ID',
+      `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '公告标题',
+      `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '公告内容',
+      `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '发布时间',
+      `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否顶置 0: 否，1: 是',
+      `is_expired` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否过期 0: 否，1: 是',
+      `is_homepage` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否首页 0: 否，1: 是',
+      PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '管理员公告表';
+
+
+#----------------------
 # 图片地址表
 #----------------------
 CREATE TABLE IF NOT EXISTS `video_img_file`(
@@ -93,6 +111,15 @@ CREATE TABLE IF NOT EXISTS `video_img_data`(
         `img_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间',
         UNIQUE KEY `user_img_id` (`img_id`,`user_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '图片表';
+
+#----------------------
+# 轮播图表
+#----------------------
+CREATE TABLE IF NOT EXISTS `video_img_carousel` (
+          `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+          `img_id` bigint(20) UNSIGNED NOT NULL COMMENT '图片ID',
+          PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '轮播图表';
 
 #----------------------
 # 视频表
@@ -182,19 +209,31 @@ CREATE TABLE IF NOT EXISTS `video_keyword` (
        UNIQUE (`keyword_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='视频关键词表';
 
-
 #----------------------
-# 二级评论表
+# 一级评论表
 #----------------------
 CREATE TABLE IF NOT EXISTS `video_comment` (
        `comment_id` bigint(20) UNSIGNED NOT NULL COMMENT '评论ID',
        `video_id` varchar(450) NOT NULL COMMENT '视频ID',
        `user_id` varchar(90) NOT NULL COMMENT '评论用户ID',
-       `parent_id` bigint(20) UNSIGNED DEFAULT NULL COMMENT '父级评论ID，用于支持二级评论',
+       `parent_num` bigint(20) UNSIGNED DEFAULT 0 NULL COMMENT '二级评论数',
        `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '评论内容',
        `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '评论时间',
        PRIMARY KEY (`comment_id`),
        KEY `idx_video_id` (`video_id`),
+       KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='视频评论表';
+
+#----------------------
+# 二级评论表
+#----------------------
+CREATE TABLE IF NOT EXISTS `video_thirty_comment` (
+       `comment_id` bigint(20) UNSIGNED NOT NULL COMMENT '评论ID',
+       `user_id` varchar(90) NOT NULL COMMENT '评论用户ID',
+       `parent_id` bigint(20) UNSIGNED DEFAULT NULL COMMENT '父级评论ID，用于支持二级评论',
+       `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '评论内容',
+       `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '评论时间',
+       PRIMARY KEY (`comment_id`),
        KEY `idx_user_id` (`user_id`),
        KEY `idx_parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='视频评论表';
