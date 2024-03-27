@@ -1,15 +1,19 @@
 package top.itshanhe.newcodevideo.web.security.filter;
 
+import com.alibaba.fastjson.JSON;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import top.itshanhe.newcodevideo.common.utils.JsonUtil;
 import top.itshanhe.newcodevideo.common.utils.JwtUtil;
 import top.itshanhe.newcodevideo.common.utils.RedisUtil;
+import top.itshanhe.newcodevideo.common.utils.ResultUtil;
 import top.itshanhe.newcodevideo.web.dto.LoginUser;
 
 import javax.servlet.FilterChain;
@@ -39,10 +43,13 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String userid;
         try {
             Claims claims = JwtUtil.parseJWT(token);
-            userid = claims.getSubject();
+            userid = (String) claims.get("userId");
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("token非法");
+            //处理异常
+            ResultUtil result = new ResultUtil(HttpStatus.UNAUTHORIZED.value(),"令牌过期，重新登陆");
+            String json = JSON.toJSONString(result);
+            JsonUtil.renderString(response,json);
+            return;
         }
         //从redis中获取用户信息
         String redisKey = "login:" + userid;

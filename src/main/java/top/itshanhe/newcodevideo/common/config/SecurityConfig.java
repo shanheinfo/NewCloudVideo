@@ -31,11 +31,6 @@ import top.itshanhe.newcodevideo.web.security.filter.JwtAuthenticationTokenFilte
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
     
-    //创建BCryptPasswordEncoder注入容器
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
     @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
     
@@ -51,10 +46,13 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .antMatchers("/public/**").permitAll()  // 允许访问以 "/public/" 开头的所有路径，不需要进行身份验证
-                        .antMatchers("/user/login").permitAll()  // 允许访问登录接口，不需要进行身份验证
+                        .antMatchers("/userLogin/**").permitAll()  // 允许访问登录接口，不需要进行身份验证
                         .anyRequest().authenticated()  // 对于其他所有请求，需要进行身份验证
                 )
                 .csrf().disable()  // 关闭 CSRF
+                // 禁用HTTP响应标头
+                .headers().cacheControl().disable()
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 不使用 Session 获取 SecurityContext
                 .and()
                 .logout()  // 配置注销功能
@@ -73,6 +71,4 @@ public class SecurityConfig {
     
         return httpSecurity.build();
     }
-    
-    
 }

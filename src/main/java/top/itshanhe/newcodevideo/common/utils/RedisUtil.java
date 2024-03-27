@@ -1,6 +1,7 @@
 package top.itshanhe.newcodevideo.common.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
@@ -62,25 +63,22 @@ public class RedisUtil {
     }
     
     /**
-     * 存储Hash类型数据
-     * @param hashKey Hash的键
-     * @param key 字段
-     * @param value 值
+     *  存储Hash类型数据
+     * @param dataMap map
+     * @param key 地址
+     * @return 值
      */
-    public void putHashValue(String hashKey, String key, String value) {
-        HashOperations<String, String, String> hashOps = stringRedisTemplate.opsForHash();
-        hashOps.put(hashKey, key, value);
+    public <T> void putHashValue( Map<String, T> dataMap , String key) {
+        stringRedisTemplate.opsForHash().putAll( key , dataMap);
     }
     
     /**
      * 获取Hash类型数据
-     * @param hashKey Hash的键
-     * @param key 字段
+     * @param key 地址
      * @return 值
      */
-    public String getHashValue(String hashKey, String key) {
-        HashOperations<String, String, String> hashOps = stringRedisTemplate.opsForHash();
-        return hashOps.get(hashKey, key);
+    public <T> Map<String, T> getHashValue(String key) {
+        return redisTemplate.opsForHash().entries(key);
     }
     
     /**

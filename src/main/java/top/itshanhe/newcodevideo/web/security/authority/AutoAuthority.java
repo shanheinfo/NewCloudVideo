@@ -20,6 +20,10 @@ public class AutoAuthority {
     public boolean hasAuthority(String authority){
         //获取当前用户的权限
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //检查 principal 对象是否是字符串类型
+        if (!(authentication.getPrincipal() instanceof String)) {
+            return false;
+        }
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         //获取权限集合
         List<String> permissions = loginUser.getPermissions();
