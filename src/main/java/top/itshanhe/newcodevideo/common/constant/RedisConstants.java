@@ -10,4 +10,5 @@ package top.itshanhe.newcodevideo.common.constant;
  */
 public class RedisConstants {
     public static final String USER_CODE_KEY = "user:code:";
+    public static final String USER_TOKEN_KEY = "user:token:";
 }

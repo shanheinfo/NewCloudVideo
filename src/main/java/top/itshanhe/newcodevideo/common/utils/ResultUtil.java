@@ -35,6 +35,11 @@ public class ResultUtil<T> {
         this.code = code;
         this.data = data;
     }
+    public ResultUtil(Integer code, String msg, T data) {
+        this.code = code;
+        this.data = data;
+        this.msg = msg;
+    }
     
     public ResultUtil(Integer code, String msg) {
         this.code = code;

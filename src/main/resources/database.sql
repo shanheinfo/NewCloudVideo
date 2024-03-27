@@ -5,6 +5,7 @@ USE NewCodeVideo;
 SET NAMES utf8mb4;
 
 DROP TABLE IF EXISTS `video_user`;
+DROP TABLE IF EXISTS `jwt_tokens`;
 DROP TABLE IF EXISTS `user_follow_relation`;
 DROP TABLE IF EXISTS `video_admin`;
 DROP TABLE IF EXISTS `video_admin_notice`;
@@ -38,17 +39,29 @@ CREATE TABLE IF NOT EXISTS `video_user`(
      `user_phone` varchar(320) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '手机号',
      `user_pwd` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
      `alipay_user_id` varchar(255) NULL COMMENT '支付宝用户ID',
-     `user_fans` int(11) NOT NULL DEFAULT 0 COMMENT '粉丝数',
-     `user_follow` int(11) NOT NULL DEFAULT 0 COMMENT '关注数',
+     `user_fans` int(11) NULL DEFAULT 0 COMMENT '粉丝数',
+     `user_follow` int(11) NULL DEFAULT 0 COMMENT '关注数',
      `money_data` decimal(10,2) default 0 NULL COMMENT '余额',
      `user_icon` bigint(20) NULL DEFAULT 1 COMMENT '头像地址id,默认为默认头像地址',
-     `user_create_ip` varchar(30) NOT NULL DEFAULT 0 COMMENT '创建时IP',
+     `user_create_ip` varchar(30) NULL DEFAULT 0 COMMENT '创建时IP',
      `user_create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
      `user_update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
      `user_status` TINYINT(1) NOT NULL DEFAULT FALSE COMMENT '用户是否封禁',
      PRIMARY KEY (`id`) USING BTREE,
      UNIQUE (`user_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact COMMENT '用户表';
+
+#----------------------
+# token令牌表
+#----------------------
+CREATE TABLE IF NOT EXISTS `jwt_tokens` (
+    `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `user_id` varchar(90) NOT NULL COMMENT '用户ID',
+    `token` varchar(4096) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'token令牌',
+    PRIMARY KEY (`id`),
+    UNIQUE (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=Compact COMMENT='JWT token令牌表';
+
 
 #----------------------
 # 粉丝关注表

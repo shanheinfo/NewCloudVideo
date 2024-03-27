@@ -29,5 +29,5 @@ public class LoginDTO {
     //临时session
     private String session;
     //判断是否登录
-    private Boolean IFLogin;
+    private Boolean IFLogin = true;
 }
