@@ -28,6 +28,8 @@ public class LoginDTO {
     private String key;
     //临时session
     private String session;
+    // 前端的ip地址
+    private String ip;
     //判断是否登录
     private Boolean IFLogin = true;
 }

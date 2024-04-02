@@ -22,4 +22,6 @@ public interface IVideoUserService extends IService<VideoUser> {
     ResultUtil userPwdLogin(LoginDTO loginDTO);
     
     ResultUtil register(LoginDTO loginDTO);
+    
+    ResultUtil sendCaptcha(LoginDTO loginDTO);
 }

@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `jwt_tokens` (
     `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `user_id` varchar(90) NOT NULL COMMENT '用户ID',
     `token` varchar(4096) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'token令牌',
+    `expiration_time` timestamp NOT NULL COMMENT '过期时间',
     PRIMARY KEY (`id`),
     UNIQUE (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=Compact COMMENT='JWT token令牌表';
