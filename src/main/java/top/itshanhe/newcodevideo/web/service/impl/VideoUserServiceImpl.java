@@ -2,6 +2,8 @@ package top.itshanhe.newcodevideo.web.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.HashUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import top.itshanhe.newcodevideo.web.service.IJwtTokensService;
 import top.itshanhe.newcodevideo.web.service.IVideoUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import top.itshanhe.newcodevideo.web.service.MailService;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -43,6 +46,8 @@ public class VideoUserServiceImpl extends ServiceImpl<VideoUserMapper, VideoUser
     @Resource
     private IJwtTokensService tokenService;
 
+    @Resource
+    private MailService mailService;
     
     @Resource
     private RedisUtil redisUtil;
@@ -62,27 +67,16 @@ public class VideoUserServiceImpl extends ServiceImpl<VideoUserMapper, VideoUser
         }
         // 当验证完之后，已经存在该用户，就是登录
         if (loginDTO.getIFLogin()) {
-            try {
-                // 获取redis 邮箱
-                String sessionDTO = redisUtil.getStringValue(RedisConstants.USER_CODE_KEY + loginDTO.getSession());
-                
-                if (sessionDTO != null && sessionDTO == loginDTO.getUserMail()) {
-                    VideoUser videoUser = lambdaQuery().eq(VideoUser::getUserMail,loginDTO.getUserMail()).one();
-                    // 复制不敏感信息，转换为LoginDTO 然后复制为hash数据生成 jwt
-                    WebDTO webDTO = new WebDTO();
-                    // 复制数据
-                    BeanUtil.copyProperties(videoUser, webDTO);
-                    Map<String, Object> map = setTokenMap(sessionDTO, webDTO);
-                    // 生成JWT
-                    String jwt = JwtUtil.generateJwt(map);
-                    
-                    return new ResultUtil<>(HttpStatus.OK.value(),"登录成功",jwt);
-                } else {
-                    return new ResultUtil<>(HttpStatus.FORBIDDEN.value(),"登陆失败");
-                }
-            } catch (Exception e) {
-                return new ResultUtil<>(HttpStatus.FORBIDDEN.value(),"登陆失败");
-            }
+            VideoUser videoUser = lambdaQuery().eq(VideoUser::getUserMail,loginDTO.getUserMail()).one();
+            // 复制不敏感信息，转换为LoginDTO 然后复制为hash数据生成 jwt
+            WebDTO webDTO = new WebDTO();
+            // 复制数据
+            BeanUtil.copyProperties(videoUser.getUserId(), webDTO);
+            Map<String, Object> map = setTokenMap(videoUser.getUserId(), webDTO);
+            // 生成JWT
+            String jwt = JwtUtil.generateJwt(map);
+            
+            return new ResultUtil<>(HttpStatus.OK.value(),"登录成功",jwt);
         }
         
         // 注册用户
@@ -160,8 +154,61 @@ public class VideoUserServiceImpl extends ServiceImpl<VideoUserMapper, VideoUser
      * @return 验证码和session
      */
     public ResultUtil temporarySession(LoginDTO loginDTO,int num) {
+        //验证码
         String code = RandomUtil.randomNumbers(6);
+        // 临时session
+        String sKey = IdUtil.objectId();
+        switch (num) {
+            case 1:
+                if (!saveSessionAndCode(loginDTO, code, sKey,num)) {
+                    new ResultUtil<>(HttpStatus.FORBIDDEN.value(),"请在5分钟后再次请求发送");
+                }
+                mailService.sendHtmlMail(loginDTO.getUserMail(),"邮箱验证码",code);
+                return new ResultUtil<>(HttpStatus.OK.value(),"验证码发送成功，临时session",sKey);
+            case 2:
+                if (!saveSessionAndCode(loginDTO, code, sKey,num)) {
+                    new ResultUtil<>(HttpStatus.FORBIDDEN.value(),"请在5分钟后再次请求发送");
+                }
+                // todo 短信验证码
+                return new ResultUtil<>(HttpStatus.OK.value(),"验证码发送成功，临时session",sKey);
+        }
         return new ResultUtil<>(HttpStatus.FORBIDDEN.value(),"信息不完整");
+    }
+    
+    /**
+     * 保存验证码和临时session进redis
+     * @param loginDTO 类
+     * @param code 验证码
+     * @param sKey 临时 session
+     * @param num 1 是邮箱 2 是手机号
+     * @return true or false
+     */
+    private boolean saveSessionAndCode(LoginDTO loginDTO, String code, String sKey,int num) {
+        String ifKey = redisUtil.getStringValue(RedisConstants.USER_CODE_KEY + loginDTO.getUserMail());
+        // 判断是否短时间内获取过验证码 如果短时间内获取过就false
+        if (ifKey != null) {
+            return false;
+        }
+        //判断是手机还是邮箱 并记录本次获取时间
+        HashMap<String, String> hashMap = new HashMap<>();
+        switch (num) {
+            case 1:
+                redisUtil.setStringValue(RedisConstants.USER_CODE_KEY + loginDTO.getUserMail(), sKey);
+                redisUtil.expire(RedisConstants.USER_CODE_KEY + loginDTO.getUserMail(), 5, TimeUnit.MINUTES);
+                hashMap.put("mail", loginDTO.getUserMail());
+                break;
+            case 2:
+                redisUtil.setStringValue(RedisConstants.USER_CODE_KEY + loginDTO.getUserPhone(), sKey);
+                redisUtil.expire(RedisConstants.USER_CODE_KEY + loginDTO.getUserPhone(), 5, TimeUnit.MINUTES);
+                hashMap.put("mail", loginDTO.getUserPhone());
+                break;
+        }
+        // 添加验证码
+        hashMap.put("code", code);
+        // 验证码地址 设置为五分钟
+        redisUtil.putHashValue(hashMap,RedisConstants.USER_CAPTCHA_KEY + sKey);
+        redisUtil.expire(RedisConstants.USER_CAPTCHA_KEY + sKey, 5, TimeUnit.MINUTES);
+        return true;
     }
     
     @Override
