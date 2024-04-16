@@ -14,20 +14,38 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password: 123456
-      lettuce:
-        pool:
-          max-active: 100
-          max-idle: 40
-          min-idle: 10
-          time-between-eviction-runs: 10s
   redis:
-    redisson:
-      file: classpath:redisson.yaml
+    host: localhost
+    port: 6379
+    password: 123456
+    redis:
+      redisson:
+        file: classpath:redisson.yaml
+  mail:
+    # 邮箱地址
+    host: smtp.163.com
+    # 默认为空
+    port:
+    # 邮箱账号
+    username: shanheinfo@163.com
+    # 授权码
+    password: MNQSYVSXTGRVNDEE
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+            fallback: false
+    # 是否开启 debug 模式
+        debug: false
 # 配置日志级别
 logging:
   level:
@@ -36,3 +54,11 @@ logging:
     # com.example.mypackage包的日志级别为DEBUG
     top.itshanhe.newcodevideo: DEBUG
 
+# 邮件和手机号密钥
+send-code:
+  # 配置账号
+  config:
+      # 是否开启邮箱验证码功能
+      mail-switch: true
+    # 是否开启短信验证码功能
+      phone-switch: true

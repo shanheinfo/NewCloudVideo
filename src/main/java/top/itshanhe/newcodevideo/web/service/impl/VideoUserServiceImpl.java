@@ -163,7 +163,7 @@ public class VideoUserServiceImpl extends ServiceImpl<VideoUserMapper, VideoUser
                 if (!saveSessionAndCode(loginDTO, code, sKey,num)) {
                     new ResultUtil<>(HttpStatus.FORBIDDEN.value(),"请在5分钟后再次请求发送");
                 }
-                mailService.sendHtmlMail(loginDTO.getUserMail(),"邮箱验证码",code);
+                mailService.sendHtmlMail(loginDTO.getUserMail(),"邮箱验证码","<h2>您的验证码：</h2><p>"+code+"</p><br><p>验证码时效五分钟</p>");
                 return new ResultUtil<>(HttpStatus.OK.value(),"验证码发送成功，临时session",sKey);
             case 2:
                 if (!saveSessionAndCode(loginDTO, code, sKey,num)) {
@@ -214,10 +214,10 @@ public class VideoUserServiceImpl extends ServiceImpl<VideoUserMapper, VideoUser
     @Override
     public ResultUtil sendCaptcha(LoginDTO loginDTO) {
         // 验证邮箱和手机号
-        if (!loginDTO.getUserMail().isEmpty() && !RegexUtils.isEmailInvalid(loginDTO.getUserMail())) {
+        if (loginDTO.getUserMail() != null && !loginDTO.getUserMail().isEmpty() && !RegexUtils.isEmailInvalid(loginDTO.getUserMail())) {
             return temporarySession(loginDTO,1);
         }
-        if (!loginDTO.getUserPhone().isEmpty() && !RegexUtils.isPhoneInvalid(loginDTO.getUserPhone())) {
+        if (loginDTO.getUserPhone() != null &&!loginDTO.getUserPhone().isEmpty() && !RegexUtils.isPhoneInvalid(loginDTO.getUserPhone())) {
             return temporarySession(loginDTO,2);
         }
         return new ResultUtil<>(HttpStatus.FORBIDDEN.value(),"信息不完整");

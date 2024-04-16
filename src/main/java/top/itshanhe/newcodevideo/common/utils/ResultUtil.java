@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
  * @date 2024/3/16
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResultUtil<T> {

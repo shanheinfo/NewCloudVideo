@@ -24,7 +24,11 @@ public class LoginController {
     @Resource
     private IVideoUserService userService;
     
-
+    /**
+     * 发送验证码
+     * @param loginDTO
+     * @return
+     */
     @PostMapping("captchaKey")
     public ResultUtil captchaKey(@RequestBody LoginDTO loginDTO) {
         return userService.sendCaptcha(loginDTO);

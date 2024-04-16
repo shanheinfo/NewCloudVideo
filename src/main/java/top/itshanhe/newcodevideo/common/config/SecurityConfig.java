@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .antMatchers("/public/**").permitAll()  // 允许访问以 "/public/" 开头的所有路径，不需要进行身份验证
                         .antMatchers("/userLogin/**").permitAll()  // 允许访问登录接口，不需要进行身份验证
+                        .antMatchers("/captcha/**").permitAll()  // 允许访问验证码接口，不需要进行身份验证
                         .anyRequest().authenticated()  // 对于其他所有请求，需要进行身份验证
                 )
                 .csrf().disable()  // 关闭 CSRF

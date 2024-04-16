@@ -1,12 +1,14 @@
 package top.itshanhe.newcodevideo.web.service.impl;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
 import top.itshanhe.newcodevideo.common.config.MailAndPhoneSendConfig;
 import top.itshanhe.newcodevideo.web.service.MailService;
 
+import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 /**
  * <p>
@@ -16,18 +18,13 @@ import javax.mail.internet.MimeMessage;
  * @author shanhe
  * @date 2024/4/3
  */
+@Service
 public class MailServiceImpl implements MailService {
     
     @Autowired
     private JavaMailSender mailSender;
     
-    //发送人
-    private String from;
     
-    public MailServiceImpl() {
-        MailAndPhoneSendConfig mailAndPhoneSendConfig = new MailAndPhoneSendConfig();
-        this.from = mailAndPhoneSendConfig.getUsername();
-    }
     
     /**
      * 发送HTML格式的邮件
@@ -42,7 +39,7 @@ public class MailServiceImpl implements MailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
             //邮件发送人
-            messageHelper.setFrom(from);
+            messageHelper.setFrom(MailAndPhoneSendConfig.username);
             //邮件接收人
             messageHelper.setTo(to);
             //邮件主题
@@ -53,6 +50,7 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

@@ -14,14 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "spring.mail")
 public class MailAndPhoneSendConfig {
-    private String username;
-    
-    // getter 和 setter 方法
-    public String getUsername() {
-        return username;
-    }
+    public static String username;
     
     public void setUsername(String username) {
-        this.username = username;
+        MailAndPhoneSendConfig.username = username;
+    }
+    
+    public static String getUserName() {
+        return username;
     }
 }
