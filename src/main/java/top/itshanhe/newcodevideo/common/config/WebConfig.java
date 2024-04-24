@@ -44,6 +44,6 @@ public class WebConfig implements WebMvcConfigurer {
         // 注册自定义拦截器，并设置拦截路径
         registry.addInterceptor(customInterceptor).addPathPatterns("/**")
         // 排除拦截的路径
-        .excludePathPatterns("/public/**", "/userLogin/**");
+        .excludePathPatterns("/public/**", "/userLogin/**","/captcha/**");
     }
 }
