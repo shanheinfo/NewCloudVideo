@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "spring.mail",
+      "type": "top.itshanhe.newcodevideo.common.config.MailAndPhoneSendConfig",
+      "sourceType": "top.itshanhe.newcodevideo.common.config.MailAndPhoneSendConfig"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}
