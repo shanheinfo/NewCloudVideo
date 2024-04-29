@@ -43,6 +43,7 @@ public class RecaptchaController {
             ResponseEntity<RecaptchaResponseDTO> responseEntity = restTemplate.postForEntity(fullUrl, null, RecaptchaResponseDTO.class);
             RecaptchaResponseDTO response = responseEntity.getBody();
             if (response != null && response.isSuccess()) {
+                log.debug("成功");
                 return ResponseEntity.ok(new ResultUtil<>(200, "验证成功"));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResultUtil<>(502, "不安全的用户"));
